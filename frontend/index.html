@@ -25,5 +25,16 @@
     <script src="./api.js"></script>
     <script src="./auth.js"></script>
     <script src="./app.js"></script>
+    <div id="file-info-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>File Details</h3>
+        <button class="modal-close" onclick="app.closeFileInfo()">&times;</button>
+      </div>
+      <div id="file-info-content" style="padding: 10px;">
+        <!-- Dynamic content will come here -->
+      </div>
+    </div>
+</div>
 </body>
 </html>

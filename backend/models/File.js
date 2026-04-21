@@ -28,14 +28,12 @@ const fileSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
   public: {
     type: Boolean,
     default: false,
   },
+}, {
+  timestamps: true // 🔥 adds createdAt & updatedAt automatically
 });
 
 module.exports = mongoose.model('File', fileSchema);

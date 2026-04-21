@@ -89,7 +89,7 @@ router.get('/recent', authMiddleware, async (req, res) => {
 // Get file by ID (with authorization check)
 router.get('/:id', async (req, res) => {
   try {
-    const file = await File.findById(req.params.id).populate('owner', 'username');
+    const file = await File.findById(req.params.id).populate('owner', 'username email');
 
     if (!file) {
       return res.status(404).json({ message: 'File not found' });

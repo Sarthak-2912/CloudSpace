@@ -930,3 +930,13 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
 }
+/* ============ FILE INFO MODAL CONTENT ============ */
+#file-info-content p {
+  margin-bottom: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--dark);
+}
+
+#file-info-content strong {
+  color: var(--primary);
+}

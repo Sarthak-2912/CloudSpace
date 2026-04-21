@@ -345,6 +345,7 @@ class CloudSpaceApp {
           ${!isOwner && file.owner ? `<small class="file-owner">By ${file.owner.username}</small>` : ''}
         </div>
         <div class="file-actions">
+          <button class="action-btn" title="Info" onclick="app.showFileInfo('${file._id}')">ℹ️</button>
           <button class="action-btn" title="Download" onclick="app.downloadFile('${file._id}', '${file.name.replace(/'/g, "\\'")}')">⬇️</button>
           ${isOwner ? `
             <button class="action-btn" title="Share" onclick="app.openShareModal('${file._id}')">🔗</button>
@@ -406,6 +407,27 @@ class CloudSpaceApp {
     a.download = file.name;
     a.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  async showFileInfo(fileId) {
+  try {
+    const file = await API.getFile(fileId);
+
+    const content = `
+      <p><strong>Name:</strong> ${file.name}</p>
+      <p><strong>Uploaded By:</strong> ${file.owner?.username || "You"}</p>
+      <p><strong>Email:</strong> ${file.owner?.email || "N/A"}</p>
+      <p><strong>Size:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
+      <p><strong>Type:</strong> ${file.type}</p>
+      <p><strong>Uploaded At:</strong> ${new Date(file.createdAt).toLocaleString()}</p>
+    `;
+
+    document.getElementById('file-info-content').innerHTML = content;
+    document.getElementById('file-info-modal').style.display = 'flex';
+
+  } catch (error) {
+    alert(`Failed to load file info: ${error.message}`);
+    }
   }
 
   async handleFileUpload(event) {
@@ -500,6 +522,9 @@ class CloudSpaceApp {
       console.error('Storage update failed:', error);
     }
   }
+  closeFileInfo() {
+   document.getElementById('file-info-modal').style.display = 'none';
+ }
 }
 
 // Initialize app when DOM is ready
