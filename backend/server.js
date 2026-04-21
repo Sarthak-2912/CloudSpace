@@ -8,13 +8,22 @@ dotenv.config();
 
 const app = express();
 
+// =======================
 // Middleware
-app.use(cors());
+// =======================
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// MongoDB Connection - CORRECTED
-const mongoURI = process.env.MONGO_URI || 'mongodb://cloudspace:Cloudspace123@cloudspace-shard-00-00.btlbrhh.mongodb.net:27017,cloudspace-shard-00-01.btlbrhh.mongodb.net:27017,cloudspace-shard-00-02.btlbrhh.mongodb.net:27017/cloudspace?retryWrites=true&w=majority&authSource=admin';
+// =======================
+// MongoDB Connection
+// =======================
+const mongoURI = process.env.MONGO_URI;
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
@@ -26,30 +35,47 @@ mongoose.connect(mongoURI, {
   console.log('✅ Connected to MongoDB Atlas');
 }).catch(err => {
   console.error('❌ MongoDB connection failed:', err.message);
-  console.error('💡 Tip: Make sure your IP is whitelisted and firewall allows port 27017');
 });
 
+// =======================
 // Routes
+// =======================
 const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/files');
 
+// API routes FIRST
 app.use('/api/auth', authRoutes);
 app.use('/api/files', fileRoutes);
 
-// Serve static frontend files
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Test route (helps debugging)
+app.get('/api', (req, res) => {
+  res.json({ message: "API is running" });
+});
 
-// Fallback route for SPA
+// =======================
+// Serve Frontend
+// =======================
+const frontendPath = path.join(__dirname, '..', 'frontend');
+
+app.use(express.static(frontendPath));
+
+// =======================
+// Fallback route (VERY IMPORTANT)
+// =======================
 app.get('*', (req, res) => {
-  // Skip API routes
+  // ❌ DO NOT let frontend override API
   if (req.originalUrl.startsWith('/api')) {
     return res.status(404).json({ message: 'API route not found' });
   }
 
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
+// =======================
+// Start Server
+// =======================
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
