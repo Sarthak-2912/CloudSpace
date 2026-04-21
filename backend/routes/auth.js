@@ -5,6 +5,10 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'cloudspace_secret_key_2024';
 
+
+router.get('/', (req, res) => {
+  res.send('Auth API is working');
+});
 // Signup
 router.post('/signup', async (req, res) => {
   try {
