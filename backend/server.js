@@ -41,9 +41,12 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Fallback route for SPA
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'), (err) => {
-    if (err) res.status(500).send(err);
-  });
+  // Skip API routes
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(404).json({ message: 'API route not found' });
+  }
+
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 const PORT = process.env.PORT || 5000;
